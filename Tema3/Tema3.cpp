@@ -70,6 +70,11 @@ void Tema3::Init()
         texture->Load2D(PATH_JOIN(sourceTextureDir, "skier.jpg").c_str(), GL_REPEAT);
         mapTextures["skier"] = texture;
     }
+    {
+        Texture2D* texture = new Texture2D();
+        texture->Load2D(PATH_JOIN(sourceTextureDir, "wood.jpeg").c_str(), GL_REPEAT);
+        mapTextures["wood"] = texture;
+    }
 
     // Load meshes
     {
@@ -191,7 +196,7 @@ void Tema3::Init()
         playerPos = glm::vec3(lightPosition[0].x, lightPosition[0].y + 7, lightPosition[0].z);
 
         // /* Debug coords*/
-         lightPosition[0] = glm::vec3(0, 0, 10);
+        lightPosition[0] = glm::vec3(0.0f, 1, -10.0f);
         for (int i = 0; i < treeCords.size(); i++) {
             lightPosition[nr_lights] = glm::vec3(treeCords[i].x, .5f, treeCords[i].y);
             lightColor[nr_lights] = glm::vec3(0, 1, 0);
@@ -307,16 +312,24 @@ void Tema3::Update(float deltaTimeSeconds)
 
         glm::mat4 modelMatrix = glm::mat4(1);
         modelMatrix = glm::rotate(modelMatrix, RADIANS(-50), glm::vec3(1, 0, 0));
-        modelMatrix = glm::translate(modelMatrix, glm::vec3(treeCords[i].x, treeCords[i].y + 0.5f, -5.5f));
+        modelMatrix = glm::translate(modelMatrix, glm::vec3(treeCords[i].x, treeCords[i].y + 1.0f, -4.5f));
         modelMatrix = glm::scale(modelMatrix, glm::vec3(1.0f));
         modelMatrix = glm::rotate(modelMatrix, RADIANS(50), glm::vec3(1, 0, 0));
         RenderSimpleMesh(meshes["cone"], shaders["LabShader"], modelMatrix, mapTextures["brad"], mapTextures["brad"], 0);
         modelMatrix = glm::mat4(1);
         modelMatrix = glm::rotate(modelMatrix, RADIANS(-50), glm::vec3(1, 0, 0));
-        modelMatrix = glm::translate(modelMatrix, glm::vec3(treeCords[i].x, treeCords[i].y + 1.0f, -4.8f));
+        modelMatrix = glm::translate(modelMatrix, glm::vec3(treeCords[i].x, treeCords[i].y + 1.5f, -3.8f));
         modelMatrix = glm::scale(modelMatrix, glm::vec3(0.6f));
         modelMatrix = glm::rotate(modelMatrix, RADIANS(50), glm::vec3(1, 0, 0));
         RenderSimpleMesh(meshes["cone"], shaders["LabShader"], modelMatrix, mapTextures["brad"], mapTextures["brad"], 0);
+
+        modelMatrix = glm::mat4(1);
+        modelMatrix = glm::rotate(modelMatrix, RADIANS(-50), glm::vec3(1, 0, 0));
+        modelMatrix = glm::translate(modelMatrix, glm::vec3(treeCords[i].x, treeCords[i].y + 0.0f, -5.8f));
+        modelMatrix = glm::scale(modelMatrix, glm::vec3(0.6f));
+        modelMatrix = glm::rotate(modelMatrix, RADIANS(50), glm::vec3(1, 0, 0));
+        modelMatrix = glm::scale(modelMatrix, glm::vec3(0.4f, 4.0f, 0.4f));
+        RenderSimpleMesh(meshes["box"], shaders["LabShader"], modelMatrix, mapTextures["wood"], mapTextures["wood"], 0);
     }
 
     for (int i = 0; i < presentCords.size(); i++) {
@@ -402,10 +415,10 @@ void Tema3::Update(float deltaTimeSeconds)
                     poleCords[i] = { x, y };
                 }
 
-                if ((playerPos.x < poleCords[i].x + 0.4f) &&
-                    (playerPos.x + 0.2f > poleCords[i].x) &&
-                    (playerPos.y < poleCords[i].y + 0.4f) &&
-                    (playerPos.y + 0.2f > poleCords[i].y)) {
+                if ((playerPos.x < poleCords[i].x + 0.3f) &&
+                    (playerPos.x + 0.3f > poleCords[i].x) &&
+                    (playerPos.y < poleCords[i].y + 0.3f) &&
+                    (playerPos.y + 0.3f > poleCords[i].y)) {
 
                     cout << endl << "Scorul tau este:" << score << endl;
                     run = false;
@@ -422,7 +435,7 @@ void Tema3::Update(float deltaTimeSeconds)
             float xp = x;
             float yp = y * cos(RADIANS(-50.0f)) - z * sin(RADIANS(-50.0f));
             float zp = y * sin(RADIANS(-50.0f)) + z * cos(RADIANS(-50.0f));
-            lightPosition[iter] = glm::vec3(xp, yp, zp);
+            lightPosition[iter] = glm::vec3(xp, yp + 4, zp);
 
             lightPosition[iter+1] = glm::vec3(poleCords[i].x - 1.0f, poleCords[i].y, -5.4f);
             x = lightPosition[iter + 1].x;
@@ -431,7 +444,7 @@ void Tema3::Update(float deltaTimeSeconds)
             xp = x;
             yp = y * cos(RADIANS(-50.0f)) - z * sin(RADIANS(-50.0f));
             zp = y * sin(RADIANS(-50.0f)) + z * cos(RADIANS(-50.0f));
-            lightPosition[iter + 1] = glm::vec3(xp, yp, zp);
+            lightPosition[iter + 1] = glm::vec3(xp, yp + 4, zp);
 
 
             glm::mat4 modelMatrix = glm::mat4(1);
@@ -541,12 +554,6 @@ void Tema3::Update(float deltaTimeSeconds)
         modelMatrix = glm::rotate(modelMatrix, RADIANS(-50), glm::vec3(1,0,0));
         RenderSimpleMesh(meshes["square"], shaders["LabShader"], modelMatrix, mapTextures["snow"],mapTextures["snow"],1);
     }
-    // /* Debug coords*/
-    //{
-    //    glm::mat4 modelMatrix = glm::mat4(1);
-    //    modelMatrix = glm::translate(modelMatrix, glm::vec3(lightPosition[0].x, lightPosition[0].y, lightPosition[0].z));
-    //    RenderSimpleMesh(meshes["sphere"], shaders["LabShader"], modelMatrix, mapTextures["stone"], mapTextures["stone"], 0);
-    //}
 
 }
 
@@ -770,8 +777,6 @@ void Tema3::OnKeyPress(int key, int mods)
             playerPos = glm::vec3(lightPosition[0].x, lightPosition[0].y + 7, lightPosition[0].z);
 
             // /* Debug coords*/
-            
-            lightPosition[0] = glm::vec3(0, 0, 10);
             for (int i = 0; i < treeCords.size(); i++) {
                 lightPosition[nr_lights] = glm::vec3(treeCords[i].x, .5f, treeCords[i].y);
                 lightColor[nr_lights] = glm::vec3(0, 1, 0);

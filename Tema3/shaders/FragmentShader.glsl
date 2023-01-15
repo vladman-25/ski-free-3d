@@ -50,7 +50,7 @@ void main()
     }
     //object_color = color.xyz
 
-    float cut_off = radians(60.0);
+    float cut_off = radians(20.0);
     float spot_light_limit = cos(cut_off);
     vec3 V = normalize( eye_position - world_position );
 
@@ -67,7 +67,7 @@ void main()
     float specular_light[200];
 
 
-    for(int i = 0; i < light_nr; i ++) {
+    for(int i = 1; i < light_nr; i ++) {
 
         ambient_light[i] = 0.25;
         diffuse_light[i] = 0;
@@ -98,22 +98,24 @@ void main()
         float d = distance(light_position[i],world_position);
         factorAtenuare[i] = 1 / (d * d);
     }
-    ambient_light[light_nr] = 0.5;
-    L[light_nr] = vec3(0, -1, 0);
-    H[light_nr] = normalize( L[light_nr] + V );
-    diffuse_light[light_nr] = material_kd * max (dot(world_normal,L[light_nr]), 0);
-    R[light_nr] = reflect (-L[light_nr], world_normal);
 
 
-    if (diffuse_light[light_nr] > 0)
+    ambient_light[0] = 0.25;
+    diffuse_light[0] = 0;
+    specular_light[0] = 0;
+    L[0] = vec3(0.0f, 0.0f,-1.0f);
+    H[0] = normalize( L[0] + V );
+    diffuse_light[0] = material_kd * max (dot(world_normal,L[0]), 0);
+    R[0] = reflect (-L[0], world_normal);
+
+
+    if (diffuse_light[0] > 0)
     {
-        specular_light[light_nr] = material_ks * pow(max(dot(V, R[light_nr]), 0), material_shininess);
+        specular_light[0] = material_ks * pow(max(dot(V, R[0]), 0), material_shininess);
     } else {
-        specular_light[light_nr] = 0;
+        specular_light[0] = 0;
     }
 
-    float d = distance(vec3(0, 4, 10),world_position);
-    factorAtenuare[light_nr] = 1 / (d * d);
     
 
 
@@ -122,17 +124,17 @@ void main()
     vec3 light;
     vec3 sum = vec3(0);
 
-    for(int i = 0; i < light_nr; i++) {
+    for(int i = 1; i < light_nr; i++) {
         if (spotlight_on[i] == 1) {
-            sum += light_att_factor[i] * factorAtenuare[i] * ( diffuse_light[i]*light_color[i] + specular_light[i]*light_color[i]);
+            sum += 40 * light_att_factor[i] * factorAtenuare[i] * ( diffuse_light[i]*light_color[i] + specular_light[i]*light_color[i]);
         } else {
             sum += factorAtenuare[i] * ( diffuse_light[i]*light_color[i] + specular_light[i]*light_color[i]);
         }
     }
 
-    sum += factorAtenuare[light_nr] * ( diffuse_light[light_nr]*vec3(1,1,1) + specular_light[light_nr]*vec3(1,1,1));
+    sum += ( diffuse_light[0]*vec3(1,1,1) + specular_light[0]*vec3(1,1,1));
 
-    light = ambient_light[0] + sum;
+    light = ambient_light[1] + sum;
 
     
 
